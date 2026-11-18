@@ -1,0 +1,38 @@
+services:
+  frontend:
+    image: nginx:stable-alpine
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: supervision
+      MARIADB_USER: supervision_app
+      MARIADB_PASSWORD: "${MARIADB_PASSWORD:?Renseignez MARIADB_PASSWORD dans .env}"
+      MARIADB_ROOT_PASSWORD: "${MARIADB_ROOT_PASSWORD:?Renseignez MARIADB_ROOT_PASSWORD dans .env}"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_NAME: supervision
+      DB_USER: supervision_app
+      DB_PASSWORD: "${MARIADB_PASSWORD:?Renseignez MARIADB_PASSWORD dans .env}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mariadb_data:
