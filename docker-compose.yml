@@ -35,5 +35,10 @@ services:
       db:
         condition: service_healthy
 
+  simulateur:
+    profiles: ["demo"]
+    build: ./backend
+    command: ["node", "src/simulateur.js"]
+
 volumes:
   mariadb_data:

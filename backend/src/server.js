@@ -4,6 +4,7 @@ const express = require('express');
 const mariadb = require('mariadb');
 const createAutomatesRouter = require('./automates');
 const createVariablesRouter = require('./variables');
+const startAcquisition = require('./acquisition');
 
 const app = express();
 app.disable('x-powered-by');
@@ -20,6 +21,8 @@ const pool = mariadb.createPool({
   foundRows: true
 });
 
+const acquisition = startAcquisition(pool);
+
 app.get('/api/health', async (_request, response) => {
   try {
     await pool.query('SELECT 1');
@@ -32,6 +35,10 @@ app.get('/api/health', async (_request, response) => {
 
 app.use('/api/automates', createAutomatesRouter(pool));
 app.use('/api/variables', createVariablesRouter(pool));
+
+app.get('/api/acquisition', (_request, response) => {
+  response.set('Cache-Control', 'no-store').json(acquisition.listStates());
+});
 
 app.use((error, _request, response, _next) => {
   if (error.type === 'entity.parse.failed') {
@@ -46,6 +53,18 @@ app.use((error, _request, response, _next) => {
   response.status(500).json({ error: 'Erreur interne du serveur.' });
 });
 
-app.listen(3000, '0.0.0.0', () => {
+const server = app.listen(3000, '0.0.0.0', () => {
   console.log('API Express en écoute sur le port 3000.');
 });
+
+function shutdown() {
+  acquisition.stop();
+  server.close(() => {
+    pool.end().catch((error) => {
+      console.error('Fermeture du pool MariaDB impossible :', error.message);
+    });
+  });
+}
+
+process.once('SIGTERM', shutdown);
+process.once('SIGINT', shutdown);
