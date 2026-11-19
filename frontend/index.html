@@ -4,11 +4,44 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Supervision industrielle</title>
+  <link rel="stylesheet" href="/dashboard.css">
+  <script defer src="/vendor/chart.umd.js"></script>
+  <script defer src="/dashboard.js"></script>
 </head>
 <body>
   <main>
-    <h1>Supervision industrielle</h1>
-    <p>Le frontend est servi par Nginx.</p>
+    <header>
+      <h1>Supervision industrielle</h1>
+      <label for="variable">Variable surveillée
+        <select id="variable" disabled>
+          <option>Chargement…</option>
+        </select>
+      </label>
+    </header>
+
+    <p id="message" role="status" hidden></p>
+
+    <section class="metrics" aria-label="Dernière acquisition">
+      <article>
+        <h2>Dernière valeur</h2>
+        <strong id="value">—</strong>
+      </article>
+      <article>
+        <h2>État de l’acquisition</h2>
+        <strong id="status">Chargement…</strong>
+      </article>
+      <article>
+        <h2>Dernière mesure</h2>
+        <strong id="timestamp">—</strong>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2 id="chart-title">Évolution en direct</h2>
+      <div class="plot">
+        <canvas id="chart" role="img" aria-labelledby="chart-title"></canvas>
+      </div>
+    </section>
   </main>
 </body>
 </html>
