@@ -2,9 +2,12 @@
 
 const express = require('express');
 const mariadb = require('mariadb');
+const createAutomatesRouter = require('./automates');
+const createVariablesRouter = require('./variables');
 
 const app = express();
 app.disable('x-powered-by');
+app.use(express.json({ limit: '16kb' }));
 
 const pool = mariadb.createPool({
   host: process.env.DB_HOST,
@@ -13,7 +16,8 @@ const pool = mariadb.createPool({
   password: process.env.DB_PASSWORD,
   connectionLimit: 5,
   connectTimeout: 3000,
-  acquireTimeout: 4000
+  acquireTimeout: 4000,
+  foundRows: true
 });
 
 app.get('/api/health', async (_request, response) => {
@@ -24,6 +28,22 @@ app.get('/api/health', async (_request, response) => {
     console.error('MariaDB indisponible :', error.code || error.message);
     response.status(503).json({ status: 'unavailable', database: 'unavailable' });
   }
+});
+
+app.use('/api/automates', createAutomatesRouter(pool));
+app.use('/api/variables', createVariablesRouter(pool));
+
+app.use((error, _request, response, _next) => {
+  if (error.type === 'entity.parse.failed') {
+    return response.status(400).json({ error: 'Le JSON envoyé est invalide.' });
+  }
+
+  if (error.type === 'entity.too.large') {
+    return response.status(413).json({ error: 'Le contenu envoyé est trop volumineux.' });
+  }
+
+  console.error('Erreur API :', error.code || error.message);
+  response.status(500).json({ error: 'Erreur interne du serveur.' });
 });
 
 app.listen(3000, '0.0.0.0', () => {
