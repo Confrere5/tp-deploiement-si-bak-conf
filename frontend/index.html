@@ -4,42 +4,130 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Supervision industrielle</title>
+
   <link rel="stylesheet" href="/dashboard.css">
-  <script defer src="/vendor/chart.umd.js"></script>
-  <script defer src="/dashboard.js"></script>
+  <link rel="stylesheet" href="/navigation.css">
+
+  <style>
+    .dashboard-shell {
+      box-sizing: border-box;
+      width: min(100%, 1140px);
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .dashboard-heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-heading h1 {
+      margin: 0;
+    }
+
+    .dashboard-picker {
+      display: grid;
+      gap: 5px;
+    }
+
+    .dashboard-picker select {
+      max-width: 100%;
+      padding: 8px 12px;
+      font: inherit;
+    }
+
+    .dashboard-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .dashboard-card {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid #cbd9da;
+      border-radius: 12px;
+      background: white;
+    }
+
+    .dashboard-card h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .dashboard-card p {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 650;
+    }
+
+    #value {
+      font-size: 1.85rem;
+    }
+
+    .dashboard-plot {
+      position: relative;
+      height: clamp(255px, 40vh, 415px);
+    }
+
+    #message:not([hidden]) {
+      margin-bottom: 16px;
+    }
+  </style>
+
+  <script src="/vendor/chart.umd.js" defer></script>
+  <script src="/dashboard.js" defer></script>
 </head>
+
 <body>
-  <main>
-    <header>
+  <main class="dashboard-shell">
+    <nav class="tp-nav" aria-label="Navigation principale">
+      <a href="/" aria-current="page">Supervision</a>
+      <a href="/automates.html">Automates</a>
+      <a href="/variables.html">Variables</a>
+    </nav>
+
+    <div class="dashboard-heading">
       <h1>Supervision industrielle</h1>
-      <label for="variable">Variable surveillée
-        <select id="variable" disabled>
-          <option>Chargement…</option>
-        </select>
+
+      <label class="dashboard-picker" for="variable">
+        Variable surveillée
+        <select id="variable"></select>
       </label>
-    </header>
+    </div>
 
-    <p id="message" role="status" hidden></p>
+    <p id="message" role="status" aria-live="polite" hidden></p>
 
-    <section class="metrics" aria-label="Dernière acquisition">
-      <article>
+    <div class="dashboard-metrics">
+      <section class="dashboard-card">
         <h2>Dernière valeur</h2>
-        <strong id="value">—</strong>
-      </article>
-      <article>
-        <h2>État de l’acquisition</h2>
-        <strong id="status">Chargement…</strong>
-      </article>
-      <article>
-        <h2>Dernière mesure</h2>
-        <strong id="timestamp">—</strong>
-      </article>
-    </section>
+        <p id="value">—</p>
+      </section>
 
-    <section class="panel">
-      <h2 id="chart-title">Évolution en direct</h2>
-      <div class="plot">
-        <canvas id="chart" role="img" aria-labelledby="chart-title"></canvas>
+      <section class="dashboard-card">
+        <h2>État de l’acquisition</h2>
+        <p id="status">En attente</p>
+      </section>
+
+      <section class="dashboard-card">
+        <h2>Dernière mesure</h2>
+        <p id="timestamp">—</p>
+      </section>
+    </div>
+
+    <section class="dashboard-card">
+      <h2>Évolution en direct</h2>
+
+      <div class="dashboard-plot">
+        <canvas id="chart" aria-label="Évolution de la variable surveillée" role="img">
+          Évolution de la mesure dans le temps.
+        </canvas>
       </div>
     </section>
   </main>

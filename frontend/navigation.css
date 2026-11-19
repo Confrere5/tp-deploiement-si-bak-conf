@@ -1,0 +1,37 @@
+.tp-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 20px;
+  padding: 4px;
+  border: 1px solid #cbd9da;
+  border-radius: 10px;
+  background: #fff;
+  font: 600 0.95rem/1.4 system-ui, sans-serif;
+}
+
+.tp-nav a {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  color: #245057;
+  text-decoration: none;
+}
+
+.tp-nav a:hover {
+  background: #e9f4f3;
+}
+
+.tp-nav a[aria-current="page"] {
+  background: #006d68;
+  color: #fff;
+}
+
+.tp-nav a:focus-visible {
+  outline: 3px solid #1559a3;
+  outline-offset: 2px;
+}
