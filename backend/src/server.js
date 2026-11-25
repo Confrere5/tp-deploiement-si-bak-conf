@@ -4,6 +4,7 @@ const express = require('express');
 const mariadb = require('mariadb');
 const createAutomatesRouter = require('./automates');
 const createVariablesRouter = require('./variables');
+const createHistoriqueRouter = require('./historique');
 const startAcquisition = require('./acquisition');
 
 const app = express();
@@ -35,12 +36,17 @@ app.get('/api/health', async (_request, response) => {
 
 app.use('/api/automates', createAutomatesRouter(pool));
 app.use('/api/variables', createVariablesRouter(pool));
+app.use('/api/historique', createHistoriqueRouter(pool));
 
 app.get('/api/acquisition', (_request, response) => {
   response.set('Cache-Control', 'no-store').json(acquisition.listStates());
 });
 
-app.use((error, _request, response, _next) => {
+app.use((error, _request, response, next) => {
+  if (response.headersSent || response.destroyed) {
+    return next(error);
+  }
+
   if (error.type === 'entity.parse.failed') {
     return response.status(400).json({ error: 'Le JSON envoyé est invalide.' });
   }
