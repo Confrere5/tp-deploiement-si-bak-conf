@@ -1,74 +1,80 @@
-:root {
-  color-scheme: light;
-  font-family: Inter, "Segoe UI", sans-serif;
-  color: #152e39;
-  background: #f1f5f5;
-}
-
-* { box-sizing: border-box; }
-body { margin: 0; }
-
-main {
-  width: min(1100px, 94%);
-  margin: 3rem auto;
-}
-
-header {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3rem); }
-h2, label { margin: 0; font-size: 0.95rem; font-weight: 600; }
-
-select {
-  display: block;
-  width: 100%;
-  min-width: 14rem;
-  margin-top: 0.45rem;
-  padding: 0.65rem;
-  font: inherit;
-  border: 1px solid #9aadb0;
-  border-radius: 0.45rem;
-  background: white;
-  color: inherit;
-}
-
-.metrics {
+.tiles {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
-article, .panel {
-  padding: 1.35rem;
-  border: 1px solid #cfdbdc;
-  border-radius: 0.7rem;
-  background: white;
+.signal {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  cursor: pointer;
 }
 
-article h2 { color: #49616b; }
-article strong { display: block; margin-top: 0.65rem; font-size: 1.35rem; }
-#value { font-size: 2rem; }
-#status[data-state="ok"] { color: #087052; }
-#status[data-state="error"] { color: #a43f25; }
-
-#message {
-  padding: 0.85rem 1rem;
-  background: #fff3d6;
-  border-left: 4px solid #b47b17;
-  overflow-wrap: anywhere;
+.signal:has(input:checked) {
+  border-top-color: var(--curve);
+  background: color-mix(in srgb, var(--curve) 7%, var(--surface));
 }
 
-.panel { margin-top: 1rem; }
-.plot { position: relative; height: clamp(240px, 40vh, 390px); margin-top: 1rem; }
-
-@media (max-width: 720px) {
-  main { margin: 1.25rem auto; }
-  header { display: grid; align-items: start; }
-  .metrics { grid-template-columns: 1fr; }
-  select { min-width: 0; }
+.signal:focus-within {
+  outline: 2px solid var(--curve);
+  outline-offset: 2px;
 }
+
+.signal-head, .signal-foot, .chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.signal-name { font-weight: 680; overflow-wrap: anywhere; }
+
+.signal input {
+  flex: 0 0 auto;
+  width: 21px;
+  height: 21px;
+  margin: 0;
+  accent-color: var(--curve);
+  cursor: pointer;
+}
+
+.reading {
+  font-size: clamp(1.9rem, 3vw, 2.9rem);
+  font-weight: 680;
+  line-height: 1.15;
+  letter-spacing: -.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+.reading small {
+  margin-left: 5px;
+  color: var(--muted);
+  font-size: .46em;
+  letter-spacing: 0;
+}
+
+.signal-foot {
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.signal-state { font-weight: 650; }
+.signal-state[data-kind="ok"] { color: var(--good); }
+.signal-state[data-kind="error"] { color: var(--bad); }
+
+.chart-head { align-items: end; margin-bottom: 16px; }
+.chart-head h2 { margin: 0; }
+.range-label { min-width: 105px; }
+.plot { position: relative; width: 100%; height: clamp(280px, 42vh, 470px); }
+.empty-plot { padding: 45px 12px; color: var(--muted); text-align: center; }

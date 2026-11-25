@@ -3,133 +3,57 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Configuration des automates | Supervision industrielle</title>
-
-  <link rel="stylesheet" href="/navigation.css">
-
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: #f1f5f5;
-      color: #172b36;
-      font: 1rem/1.5 system-ui, sans-serif;
-    }
-
-    main { max-width: 1140px; margin: auto; padding: 32px 20px; }
-    h1 { margin: 20px 0; }
-    h2 { margin: 0 0 16px; font-size: 1.2rem; }
-
-    section {
-      background: white;
-      border: 1px solid #cbd9da;
-      border-radius: 12px;
-      margin-bottom: 18px;
-      padding: 22px;
-    }
-
-    .fields {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-    }
-
-    label { display: grid; gap: 5px; font-weight: 600; }
-
-    input, button {
-      font: inherit;
-      padding: 8px 12px;
-      border: 1px solid #99afb1;
-      border-radius: 6px;
-    }
-
-    input { width: 100%; }
-    button { background: white; color: #172b36; cursor: pointer; }
-    button[type="submit"] { background: #006d68; color: white; }
-    button:disabled { opacity: .55; cursor: wait; }
-
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-    form .actions { margin-top: 16px; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; }
-
-    th, td {
-      text-align: left;
-      padding: 10px 8px;
-      border-bottom: 1px solid #dce5e5;
-    }
-
-    #message { font-weight: 600; color: #00645d; }
-    #message:empty { display: none; }
-    #message.error { color: #a52823; }
-  </style>
-
+  <title>Automates | Supervision industrielle</title>
+  <script src="/interface.js?v=2"></script>
+  <link rel="stylesheet" href="/navigation.css?v=2">
   <script src="/automates.js" defer></script>
 </head>
-
-<body>
+<body data-page="automates">
+  <header id="app-header"></header>
   <main>
-    <nav class="tp-nav" aria-label="Navigation principale">
-      <a href="/">Supervision</a>
-      <a href="/automates.html" aria-current="page">Automates</a>
-      <a href="/variables.html">Variables</a>
-      <a href="/historique.html">Historique</a>
-    </nav>
+    <h1>Parc d’automates</h1>
+    <p id="message" role="status"></p>
 
-    <h1>Configuration des automates</h1>
-
-    <section>
-      <h2 id="form-title">Ajouter un automate</h2>
-
-      <form id="automate-form">
-        <div class="fields">
-          <label>Nom
-            <input id="name" required placeholder="Ex. Ligne de conditionnement">
-          </label>
-
-          <label>Adresse IP ou nom d’hôte
-            <input id="host" required placeholder="Ex. 192.168.1.20">
-          </label>
-
-          <label>Port TCP
-            <input id="port" type="number" min="1" max="65535"
-                   value="502" required>
-          </label>
-
-          <label>Identifiant Modbus
-            <input id="unit-id" type="number" min="0" max="255"
-                   value="1" required>
-          </label>
+    <div class="workbench">
+      <section class="panel">
+        <h2>Automates configurés</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th><th>Adresse</th><th>Port</th>
+                <th>ID Modbus</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="automates"></tbody>
+          </table>
         </div>
+      </section>
 
-        <div class="actions">
-          <button id="save" type="submit">Ajouter</button>
-          <button id="cancel" type="button" hidden>Annuler la modification</button>
-        </div>
-      </form>
-    </section>
-
-    <p id="message" role="status" aria-live="polite"></p>
-
-    <section>
-      <h2>Automates configurés</h2>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Nom</th>
-              <th scope="col">Adresse</th>
-              <th scope="col">Port</th>
-              <th scope="col">ID Modbus</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="automates"></tbody>
-        </table>
-      </div>
-    </section>
+      <section class="panel">
+        <h2 id="form-title">Ajouter un automate</h2>
+        <form id="automate-form">
+          <div class="fields">
+            <label class="wide">Nom de l’automate
+              <input id="name" required placeholder="Ex. Ligne de conditionnement">
+            </label>
+            <label class="wide">Adresse IP ou nom d’hôte
+              <input id="host" required placeholder="Ex. 192.168.1.20">
+            </label>
+            <label>Port TCP
+              <input id="port" type="number" min="1" max="65535" value="502" required>
+            </label>
+            <label>Identifiant Modbus
+              <input id="unit-id" type="number" min="0" max="255" value="1" required>
+            </label>
+          </div>
+          <div class="actions">
+            <button id="save" type="submit">Ajouter</button>
+            <button id="cancel" type="button" hidden>Annuler la modification</button>
+          </div>
+        </form>
+      </section>
+    </div>
   </main>
 </body>
 </html>

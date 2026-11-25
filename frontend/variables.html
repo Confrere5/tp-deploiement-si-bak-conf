@@ -3,157 +3,75 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Configuration des variables | Supervision industrielle</title>
-
-  <link rel="stylesheet" href="/navigation.css">
-
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: #f1f5f5;
-      color: #172b36;
-      font: 1rem/1.5 system-ui, sans-serif;
-    }
-
-    main { max-width: 1140px; margin: auto; padding: 32px 20px; }
-    h1 { margin: 20px 0; }
-    h2 { margin: 0 0 16px; font-size: 1.2rem; }
-
-    section {
-      background: white;
-      border: 1px solid #cbd9da;
-      border-radius: 12px;
-      margin-bottom: 18px;
-      padding: 22px;
-    }
-
-    .fields {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
-      gap: 14px;
-    }
-
-    label { display: grid; gap: 5px; font-weight: 600; }
-
-    input, select, button {
-      font: inherit;
-      padding: 8px 12px;
-      border: 1px solid #99afb1;
-      border-radius: 6px;
-    }
-
-    input, select { width: 100%; }
-    button { background: white; color: #172b36; cursor: pointer; }
-    button[type="submit"] { background: #006d68; color: white; }
-    button:disabled { opacity: .55; cursor: default; }
-
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-    form .actions { margin-top: 16px; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; }
-
-    th, td {
-      text-align: left;
-      padding: 10px 8px;
-      border-bottom: 1px solid #dce5e5;
-    }
-
-    #message { font-weight: 600; color: #00645d; }
-    #message:empty { display: none; }
-    #message.error { color: #a52823; }
-  </style>
-
+  <title>Variables | Supervision industrielle</title>
+  <script src="/interface.js?v=2"></script>
+  <link rel="stylesheet" href="/navigation.css?v=2">
   <script src="/variables.js" defer></script>
 </head>
-
-<body>
+<body data-page="variables">
+  <header id="app-header"></header>
   <main>
-    <nav class="tp-nav" aria-label="Navigation principale">
-      <a href="/">Supervision</a>
-      <a href="/automates.html">Automates</a>
-      <a href="/variables.html" aria-current="page">Variables</a>
-      <a href="/historique.html">Historique</a>
-    </nav>
+    <h1>Variables surveillées</h1>
+    <p id="message" role="status"></p>
 
-    <h1>Configuration des variables</h1>
-
-    <section>
-      <h2 id="form-title">Ajouter une variable</h2>
-
-      <form id="variable-form">
-        <div class="fields">
-          <label>Automate
-            <select name="automateId" required></select>
-          </label>
-
-          <label>Nom de la variable
-            <input name="name" required placeholder="Ex. Pression de ligne">
-          </label>
-
-          <label>Unité
-            <input name="unit" placeholder="Ex. bar">
-          </label>
-
-          <label>Type de registre
-            <select name="registerType">
-              <option value="holding">Holding register</option>
-              <option value="input">Input register</option>
-            </select>
-          </label>
-
-          <label>Adresse Modbus (à partir de 0)
-            <input name="registerAddress" type="number" min="0" max="65535"
-                   step="1" value="0" required>
-          </label>
-
-          <label>Type de donnée
-            <select name="dataType">
-              <option value="uint16">Entier 16 bits non signé</option>
-              <option value="int16">Entier 16 bits signé</option>
-            </select>
-          </label>
-
-          <label>Facteur multiplicateur
-            <input name="scaleFactor" type="number" step="any"
-                   value="1" required>
-          </label>
-
-          <label>Intervalle de lecture (ms)
-            <input name="intervalMs" type="number" min="1" step="1"
-                   value="2000" required>
-          </label>
+    <div class="workbench">
+      <section class="panel">
+        <h2>Configuration des lectures</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Variable</th><th>Automate</th><th>Registre</th>
+                <th>Unité</th><th>Intervalle</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="variables"></tbody>
+          </table>
         </div>
+      </section>
 
-        <div class="actions">
-          <button id="save" type="submit" disabled>Ajouter</button>
-          <button id="cancel" type="button" hidden>Annuler la modification</button>
-        </div>
-      </form>
-    </section>
-
-    <p id="message" role="status" aria-live="polite"></p>
-
-    <section>
-      <h2>Variables configurées</h2>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Variable</th>
-              <th scope="col">Automate</th>
-              <th scope="col">Registre</th>
-              <th scope="col">Unité</th>
-              <th scope="col">Intervalle</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="variables"></tbody>
-        </table>
-      </div>
-    </section>
+      <section class="panel">
+        <h2 id="form-title">Ajouter une variable</h2>
+        <form id="variable-form">
+          <div class="fields">
+            <label class="wide">Automate
+              <select name="automateId" required></select>
+            </label>
+            <label class="wide">Nom de la variable
+              <input name="name" required placeholder="Ex. Pression de ligne">
+            </label>
+            <label>Type de registre
+              <select name="registerType">
+                <option value="holding">Holding register</option>
+                <option value="input">Input register</option>
+              </select>
+            </label>
+            <label>Adresse du registre
+              <input name="registerAddress" type="number" min="0" max="65535" value="0" required>
+            </label>
+            <label>Type de donnée
+              <select name="dataType">
+                <option value="uint16">16 bits non signé</option>
+                <option value="int16">16 bits signé</option>
+              </select>
+            </label>
+            <label>Facteur multiplicateur
+              <input name="scaleFactor" type="number" step="any" value="1" required>
+            </label>
+            <label>Unité
+              <input name="unit" placeholder="Ex. bar">
+            </label>
+            <label>Intervalle (ms)
+              <input name="intervalMs" type="number" min="1" value="2000" required>
+            </label>
+          </div>
+          <div class="actions">
+            <button id="save" type="submit" disabled>Ajouter</button>
+            <button id="cancel" type="button" hidden>Annuler la modification</button>
+          </div>
+        </form>
+      </section>
+    </div>
   </main>
 </body>
 </html>

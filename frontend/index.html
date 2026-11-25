@@ -3,131 +3,60 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Supervision industrielle</title>
-
-  <link rel="stylesheet" href="/dashboard.css">
-  <link rel="stylesheet" href="/navigation.css">
-
-  <style>
-    .dashboard-shell {
-      box-sizing: border-box;
-      width: min(100%, 1140px);
-      margin: 0 auto;
-      padding: 32px 20px;
-    }
-
-    .dashboard-heading {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: end;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .dashboard-heading h1 {
-      margin: 0;
-    }
-
-    .dashboard-picker {
-      display: grid;
-      gap: 5px;
-    }
-
-    .dashboard-picker select {
-      max-width: 100%;
-      padding: 8px 12px;
-      font: inherit;
-    }
-
-    .dashboard-metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .dashboard-card {
-      min-width: 0;
-      padding: 20px;
-      border: 1px solid #cbd9da;
-      border-radius: 12px;
-      background: white;
-    }
-
-    .dashboard-card h2 {
-      margin: 0 0 10px;
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    .dashboard-card p {
-      margin: 0;
-      font-size: 1.25rem;
-      font-weight: 650;
-    }
-
-    #value {
-      font-size: 1.85rem;
-    }
-
-    .dashboard-plot {
-      position: relative;
-      height: clamp(255px, 40vh, 415px);
-    }
-
-    #message:not([hidden]) {
-      margin-bottom: 16px;
-    }
-  </style>
-
+  <title>Direct | Supervision industrielle</title>
+  <script src="/interface.js?v=2"></script>
+  <link rel="stylesheet" href="/navigation.css?v=2">
+  <link rel="stylesheet" href="/dashboard.css?v=2">
   <script src="/vendor/chart.umd.js" defer></script>
-  <script src="/dashboard.js" defer></script>
+  <script src="/dashboard.js?v=2" defer></script>
 </head>
+<body data-page="direct">
+  <header id="app-header"></header>
+  <main>
+    <h1>Supervision en direct</h1>
+    <p id="message" role="status">Chargement des variables…</p>
 
-<body>
-  <main class="dashboard-shell">
-    <nav class="tp-nav" aria-label="Navigation principale">
-      <a href="/" aria-current="page">Supervision</a>
-      <a href="/automates.html">Automates</a>
-      <a href="/variables.html">Variables</a>
-      <a href="/historique.html">Historique</a>
-    </nav>
+    <section aria-labelledby="tiles-title">
+      <h2 id="tiles-title">Variables à comparer</h2>
+      <div id="tiles" class="tiles"></div>
+    </section>
 
-    <div class="dashboard-heading">
-      <h1>Supervision industrielle</h1>
-
-      <label class="dashboard-picker" for="variable">
-        Variable surveillée
-        <select id="variable"></select>
+    <template id="signal-template">
+      <label class="signal">
+        <span class="signal-head">
+          <span class="signal-name"></span>
+          <input type="checkbox" checked>
+        </span>
+        <span class="reading">
+          <span class="signal-value">—</span><small class="signal-unit"></small>
+        </span>
+        <span class="signal-foot">
+          <span class="signal-state">En attente</span>
+          <time></time>
+        </span>
       </label>
-    </div>
+    </template>
 
-    <p id="message" role="status" aria-live="polite" hidden></p>
+    <section class="panel" aria-labelledby="chart-title">
+      <div class="chart-head">
+        <div>
+          <h2 id="chart-title">Comparaison des courbes</h2>
+          <p class="hint">Cochez les variables à tracer. Les points s’accumulent depuis l’ouverture de la page.</p>
+        </div>
 
-    <div class="dashboard-metrics">
-      <section class="dashboard-card">
-        <h2>Dernière valeur</h2>
-        <p id="value">—</p>
-      </section>
+        <label class="range-label">Fenêtre maximale
+          <select id="window-size">
+            <option value="2">2 minutes</option>
+            <option value="5" selected>5 minutes</option>
+            <option value="15">15 minutes</option>
+          </select>
+        </label>
+      </div>
 
-      <section class="dashboard-card">
-        <h2>État de l’acquisition</h2>
-        <p id="status">En attente</p>
-      </section>
-
-      <section class="dashboard-card">
-        <h2>Dernière mesure</h2>
-        <p id="timestamp">—</p>
-      </section>
-    </div>
-
-    <section class="dashboard-card">
-      <h2>Évolution en direct</h2>
-
-      <div class="dashboard-plot">
-        <canvas id="chart" aria-label="Évolution de la variable surveillée" role="img">
-          Évolution de la mesure dans le temps.
+      <p id="plot-message" class="empty-plot">En attente des mesures…</p>
+      <div id="plot" class="plot" hidden>
+        <canvas id="chart" role="img" aria-label="Courbes des variables cochées">
+          Les dernières valeurs sont aussi disponibles dans les tuiles.
         </canvas>
       </div>
     </section>
